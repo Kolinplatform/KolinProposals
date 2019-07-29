@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Kolin Proposals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Google fonts -->
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+	<!-- Icons -->
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">  
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+  <!-- Main container -->
+	<div class="comments-container">
+		<div class="row"><h1>Kolin Proposal <span id="proposalHash">#1</span></h1><div class="mx-5">made by <a href="https://kolinplatform.com">Kolin Platform</a></div></div>
+        <div class="my-2">Submit your proposal to start a decentralised community voting!</div> 
+        <div class="my-2"><button onClick="login()" class="btn btn-primary">Log in</button></div>
+        <span id="address"></span>
+        <span id="addressRegistered"></span>
+		<ul id="comments-list" class="comments-list">
+			<li>
+				<div class="comment-main-level">
+					<!-- Avatar -->
+					<div class="comment-avatar"><img src="https://i.dlpng.com/static/png/1763554-bob-marley-reggae-music-singer-songwriter-bob-marley-png-bob-marley-png-900_840_preview.png" alt="" id="avatar_hash1"></div>
+					<!-- Comment container -->
+					<div class="comment-box" id="hash1">
+						<div class="comment-head">
+							<h6 class="comment-name by-author" id="author_hash1"><a href="https://wavesexplorer.com/address/" id="address_hash1">Bob</a></h6>
+							<span id="blockHeight" id="timestamp_hash1">30 minutes ago</span>
+							<i class="fa fa-reply" id="reply_hash1"> 3</i>
+							<i class="fa fa-heart" id="heart_hash1"> 22</i>
+							<i class="fa fa-thumbs-down" id="dislike_hash1"> 0</i>
+							<i class="fa fa-thumbs-up" id="like_hash1"> 43</i>
+							
+							
+						</div>
+						<div class="comment-content" id="comment_hash1">
+							How about creating a song for KolinPlatform supporting international Education?
+						</div>
+					</div>
+				</div>
+				<!-- Responses -->
+				<ul class="comments-list reply-list">
+					<li>
+						<!-- Avatar -->
+						<div class="comment-avatar"><img src="https://video-images.vice.com/articles/58cfd4b05be8e0277d970243/lede/1490015526467-414998754_9e289f1e4a_o.jpeg" alt=""></div>
+						<!-- Comments -->
+						<div class="comment-box">
+							<div class="comment-head">
+								<h6 class="comment-name"><a href="https://wavesexplorer.com/address/">Jimi</a></h6>
+								<span>10 minutes ago</span>
+								<i class="fa fa-reply"> 1</i>
+								<i class="fa fa-heart"> 11</i>
+							</div>
+							<div class="comment-content">
+								Count me in, what do you need?
+							</div>
+						</div>
+					</li>
+
+					<li>
+						<!-- Avatar -->
+						<div class="comment-avatar"><img src="https://i.dlpng.com/static/png/1763554-bob-marley-reggae-music-singer-songwriter-bob-marley-png-bob-marley-png-900_840_preview.png" alt=""></div>
+						<!-- Comment -->
+						<div class="comment-box">
+							<div class="comment-head">
+								<h6 class="comment-name by-author"><a href="http://wavesexplorer.com/address/">Bob</a></h6>
+								<span>10 minutes ago</span>
+								<i class="fa fa-reply"> 0</i>
+								<i class="fa fa-heart"> 37</i>
+							</div>
+							<div class="comment-content">
+								Just bring your guitar and let's record this for eternity in the Waves Blockchain!
+							</div>
+						</div>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<div class="comment-main-level">
+					<!-- Avatar -->
+					<div class="comment-avatar"><img src="https://video-images.vice.com/articles/58cfd4b05be8e0277d970243/lede/1490015526467-414998754_9e289f1e4a_o.jpeg" alt=""></div>
+					<!-- Comment-->
+					<div class="comment-box">
+						<div class="comment-head">
+							<h6 class="comment-name"><a href="http://wavesexplorer.com/address/">Jimi</a></h6>
+							<span>5 minutes ago</span>
+							<i class="fa fa-reply"> 0</i>
+							<i class="fa fa-heart"> 24</i>
+						</div>
+						<div class="comment-content">
+							This will be epic!
+						</div>
+					</div>
+				</div>
+			</li>
+        </ul>
+        
+            <div class="my-2">              
+                <input class="form-control" type="text" placeholder="Add your comments and join this thread" />
+            </div>
+            <div class="my-2">
+                <button class="btn btn-info">Add</button>
+            </div>
+        
+		<div>&nbsp;</div>
+		<div>*Here Bob created a proposal using a dApp for sharing his idea, and Jimi came along on his support.
+			In this example all transactions are saved as <strong>DataTransactions</strong> in the Data Storage of a dApp (saved immutably in the Waves Blockchain).
+			Backend code was written using <strong>Ride4Dapps</strong> and Transactions signed via <a href="https://wavesplatform.com/products-keeper text-dark">WavesKeeper</a>. People can use the like or dislike button to support or 
+		    not the submitted proposal and the donate (heart) to tip the proposal creator or person replying</div>
+	</div>
+	<script>
+	// JavaScript Document
+
+//If a website is trusted, Waves Keeper public data are returned.
+function trigger(){WavesKeeper.publicState()
+        .then(state => {
+            console.log(state); //displaying the result in the console
+            /*...processing data */
+        }).catch(error => {
+            console.error(error); // displaying the result in the console
+            /*...processing errors */
+        })}
+//Checking if WavesKeeper is installed
+window.onload = function(){
+if(typeof WavesKeeper !== 'undefined'){
+    console.log('WavesKeeper found');
+    WavesKeeper.on("update", state => {console.log(state)
+        //state object as from WavesKeeper.publicState
+   });
+    }else{
+    console.log('WavesKeeper is not installed');
+    alert('Please install WavesKeeper');
+    }}
+//login with Waveskeeper
+ function login(x){const authData = { 
+        data: "",
+        name: "Kolin Proposals v.0.1",
+        icon: "https://raw.githubusercontent.com/Kolinplatform/demo/master/images/Kolin-png.png",
+        referrer: "https://proposals.kolinplatform.com",
+        
+    };
+				 
+ WavesKeeper.auth(authData).then((data) => {
+        //data – data from Waves Keeper
+        //verifying signature and saving the address...
+        console.log(data);
+        document.getElementById("address").innerHTML = 'You are logged in with address: <b>' + data.address + '</b>';
+       /* if data.address...
+       then {
+           document.getElementById("addressRegistered").innerHTML = ", welcome back <img class='img img-small' href='" data.avatar "'></img> <strong> " + data.alias + "</strong>";
+            }
+       else{document.getElementById("addressRegistered").innerHTML = "your wallet has not been used with this dApp before, please register" }
+*/
+    }).catch((error) => {console.log(error)&&alert(error)
+        //processing the error
+		
+    }) 
+				}
+//Sign transference with Waveskeeper
+
+function sendkolin(){
+	var WavesAddress = document.getElementById("RecipientWavesAddress").value;
+var Amount = document.getElementById("Amount").value;
+	WavesKeeper.signAndPublishTransaction({
+           type: 4,
+           data: {
+               amount: {
+                  assetId: "FiKspxSpkpzT4pMUA9ccZkbJmVXTdu4JhFDXNNXr5noW",
+                  tokens: Amount,
+               },
+               fee: {
+                   assetId: "FiKspxSpkpzT4pMUA9ccZkbJmVXTdu4JhFDXNNXr5noW",
+                   tokens: "200"
+               },
+               recipient: WavesAddress,
+           }
+       }).then((data) => {
+           //data - a line ready for sending to Waves network's node (server)
+       }).catch((error) => { 
+           //processing errors
+		    console.error("Something went wrong", error);
+       });}
+
+/*Lease Kolin
+//not activated in mainnet
+
+function lease(){WavesKeeper.signAndPublishTransaction({
+        type: 8,
+        data: {
+             "amount": 1000000,
+			"assetId": "FiKspxSpkpzT4pMUA9ccZkbJmVXTdu4JhFDXNNXr5noW",
+             "recipient": "3PGsboZa7nvTMcAhL8jzPtrXGjsgU8yKWeQ",
+             fee: {
+                 "tokens": "200",
+                 "assetId": "FiKspxSpkpzT4pMUA9ccZkbJmVXTdu4JhFDXNNXr5noW"
+             }
+        }
+   }).then((tx) => {
+        console.log("You've leased Kolin!");
+   }).catch((error) => {
+        console.error("This feature isn't still avaialble", error);
+   });}
+
+//buykolin
+var bprice = document.getElementById("bprice").value;
+var bamount = document.getElementById("bamount").value;
+function buybtckolin(){
+	
+
+	WavesKeeper.signAndPublishOrder({
+	
+        type: 1002,
+        data: {
+             matcherPublicKey: "7kPFrHDiGw1rCm7LPszuECwWYL3dMf6iMifLRDJQZMzy",
+             orderType: "buy",
+             expiration: Date.now() + 100000,
+             amount: {
+                 tokens: bamount,
+                 assetId: "FiKspxSpkpzT4pMUA9ccZkbJmVXTdu4JhFDXNNXr5noW"
+             },
+             price: {
+                 tokens: bprice,
+                 assetId: "8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS"
+             },
+             matcherFee: {
+                 tokens: "0.03",
+                 assetId: "WAVES"
+             }
+        }
+   }).then((tx) => {
+        console.log("Order submited");
+   }).catch((error) => {
+        console.error("Something went wrong", error);
+   });}
+
+//sellkolin
+var sprice = document.getElementById("sprice").value;
+var samount = document.getElementById("samount").value;
+
+function sellbtckolin(){
+	
+
+	WavesKeeper.signAndPublishOrder({
+        type: 1002,
+        data: {
+             matcherPublicKey: "7kPFrHDiGw1rCm7LPszuECwWYL3dMf6iMifLRDJQZMzy",
+             orderType: "sell",
+             expiration: Date.now() + 100000,
+             amount: {
+                 tokens: samount,
+                 assetId: "FiKspxSpkpzT4pMUA9ccZkbJmVXTdu4JhFDXNNXr5noW"
+             },
+             price: {
+                 tokens: sprice,
+                 assetId: "8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS"
+             },
+             matcherFee: {
+                 tokens: "0.03",
+                 assetId: "WAVES"
+             }
+        }
+   }).then((tx) => {
+        console.log("Order submited");
+   }).catch((error) => {
+        console.error("Something went wrong", error);
+   });}
+// cancel order
+function cancelorder(){WavesKeeper.signAndPublishCancelOrder({
+        type: 1003,
+        data: {
+            id: '31EeVpTAronk95TjCHdyaveDukde4nDr9BfFpvhZ3Sap'
+        }
+    }).then(() => {
+        console.log("Order cancelled");
+    }).catch((error) => {
+        console.error("Something went wrong", error);
+    });}*/
+//create alias
+let testAlias = document.getElementById("newAlias")
+ function alias(){WavesKeeper.signAndPublishTransaction({
+        type: 10,
+        data: {
+             alias: testAlias,
+             fee: {
+                 "tokens": "0.001",
+                 "assetId": "WAVES"
+             }
+        }
+   }).then((tx) => {
+        console.log("Your new alias has been created");
+   }).catch((error) => {
+        console.error("Something went wrong", error);
+   });}
+
+   //invoke script
+   let functionsToCall = {function: 'donate',
+                     args: [
+                         {
+                           "type": "string",
+                           "value": "Will it work?"
+                         }]}
+   function post(){ WavesKeeper.signAndPublishTransaction({
+        type: 16,
+        data: {
+             fee: {
+                 "tokens": "0.05",
+                 "assetId": "WAVES"
+             },
+             dappAddress: 'INSERTWAVESDAPPADDRESSHERE',
+             call: {
+                     functionsToCall
+                 }, payment: [{assetId: "WAVES", tokens: 2}]
+        }
+   }).then((tx) => {
+        console.log("Your post have been submitted successfully");
+   }).catch((error) => {
+        console.error("There was an error with the transaction", error);
+   });}
+	</script>
+  </body>
+
+</html>

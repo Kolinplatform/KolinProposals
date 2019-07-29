@@ -1,0 +1,234 @@
+{-# STDLIB_VERSION 3 #-}
+{-# CONTENT_TYPE DAPP #-}
+{-# SCRIPT_TYPE ACCOUNT #-}
+
+let NONE = "none"
+func getNumberByKey(key: String) = {
+    let num = match getInteger(this, key) {
+        case a:Int => a 
+        case _ => 0
+    }
+    num
+}
+func getStrByKey(key: String) = {
+    let str = match getString(this, key) {
+        case a:String => a 
+        case _ => NONE
+    }
+    str
+}
+func getKeyCommentDonation(comment: String) = {
+    comment + "_donation"
+}
+func getValueCommentDonation(comment:String) = {
+    getNumberByKey(getKeyCommentDonation(comment))
+}
+func getKeyKolinerCommentCounter(koliner: String, comment: String) = {
+    comment + "_" + koliner + "_cnt"
+}
+func getValueKolinerCommentCounter(koliner: String, comment: String) = {
+    getNumberByKey(getKeyKolinerCommentCounter(koliner, comment))
+}
+func getKeyComment(author: String, title: String) = {
+    "comment_" + toBase58String(sha256(toBytes(author + title)))
+}
+func getKeyCommentData(comment: String) = {
+    comment + "_data"
+} 
+func getKeyCommentAuthor(comment: String) = {
+    comment + "_owner"
+}
+func getValueCommentAuthor(comment: String) = {
+    getStrByKey(getKeyCommentAuthor(comment))
+}
+func getKeyBalanceAuthor(account: String) = {
+    account + "_balance"
+}
+func getValueBalanceAuthor(account: String) = {
+    getNumberByKey(getKeyBalanceAuthor(account))
+}
+#let VOTERS = 3
+#let QUORUM = 2
+let VOTING = "voting"
+#let REVEAL = "reveal"
+#let FEATURED = "featured"
+#let DELISTED = "delisted"
+#
+#Comment: ThumbsUp-Reveal Voting keys:
+#
+func getKeyThumbsUp(comment: String, koliner: String) = {
+    comment + "_" + koliner + "_thumbsup"
+}
+func getValueThumbsUp(comment: String, koliner: String) = {
+    getStrByKey(getKeyThumbsUp(comment, koliner))
+}
+func getKeyThumbsUpsCount(comment: String) = {
+    comment + "_thumbsupcnt"
+}
+func getValueThumbsUpsCount(comment: String) = {
+    getNumberByKey(getKeyThumbsUpsCount(comment))
+}
+func getKeyThumbsDown(comment: String, koliner: String) = {
+    comment + "_" + koliner + "_thumbsdown"
+}
+func getValueThumbsDown(comment: String, koliner: String) = {
+    getStrByKey(getKeyThumbsDown(comment, koliner))
+}
+func getKeyThumbsDownsCount(comment: String) = {
+    comment + "_thumbsdowncnt"
+}
+func getValueThumbsDownCount(comment: String) = {
+    getNumberByKey(getKeyThumbsDownsCount(comment))
+}
+##func getKeyReveal(comment: String, koliner: String) = {
+##    comment + "_" + koliner + "_reveal"
+##}
+##func getValueReveal(comment: String, koliner: String) = {
+##   getStrByKey(getKeyReveal(comment, koliner))
+##}
+func getKeyCommentStatus(comment: String) = {
+    comment + "_status"
+}
+func getValueCommentStatus(comment: String) = {
+    getStrByKey(getKeyCommentStatus(comment))
+}
+func getKeyVoteCount(comment: String, vote: String) = {
+    comment + "_res:" + vote
+}
+func getValueVoteCount(comment: String, vote: String) = {
+    getNumberByKey(getKeyVoteCount(comment, vote))
+}
+##Blacklisted function Oracle
+func getExtAddressOracle() = {
+    extract(addressFromString("3N2j5qyw6oAZs6mbey6SqefmmTuFNLAKFHx"))
+}
+let BLACKLISTED = "blacklist"
+
+func getExtKeyCommentWhiteListStatus(account: String) = {
+    account + "_verifier_status"
+}
+func getExtValueCommentWhitelistStatus(oracle: Address, account: String) = {
+    let str = match getString(oracle, getExtKeyCommentWhiteListStatus(account)){
+        case a: String => a 
+        case _ => NONE
+    }
+    str
+}
+##Allows the account owner to update the dApp script
+@Verifier(tx)
+func verify() = {
+    match tx {
+        case d: SetScriptTransaction => true
+        case d: DataTransaction => true
+        case d: TransferTransaction => true
+        case _ => false
+    }
+}
+
+#@Callable(i)
+#func voteReveal(comment: String, vote: String, salt: String) = {
+#    let koliner = toBase58String(i.caller.bytes)
+#    let status = getValueCommentStatus(comment)
+#    let newVoteCount = getValueVoteCount(comment, vote) + 1
+#    if (toBase58String(sha256(toBytes(vote + salt))) != getValueThumbsUp(comment, koliner))
+#    then throw("reveal data not valid")
+#    else if (getValueThumbsUpsCount(comment) < VOTERS) then throw("max number of votes not reached")
+#    else if (getValueReveal(comment, koliner) != NONE) then throw("koliner already in the register")#
+#    else if (status != VOTING && status != REVEAL) then throw("wrong status")
+#    else if (vote != FEATURED && vote != DELISTED) then throw("wrong vote")
+#    else if (status == FEATURED || status == DELISTED) then throw("vote has finished")
+#    else{
+#        WriteSet([
+#        DataEntry(getKeyReveal(comment, koliner), vote),
+#        DataEntry(getKeyVoteCount(comment, vote), newVoteCount),
+#        DataEntry(getKeyCommentStatus(comment), if(newVoteCount >= QUORUM) then vote else REVEAL)
+#        ])
+#    }
+#}
+@Callable(i)
+func voteThumbsUp(comment: String, hash:String) = {
+    let koliner = toBase58String(i.caller.bytes)
+    let thumbsups = getValueThumbsUpsCount(comment)
+    let status = getValueCommentStatus(comment)
+ #   if ( thumbsups >= VOTERS) then throw("reached max num voters")
+    if (getValueThumbsUp(comment, koliner) != NONE) then throw("koliner has already voted")
+    else if (getKeyCommentAuthor(comment) == NONE) then throw("the comment that you are replying at does not exist")
+    else if (status !=NONE) then throw("voting is not possible")
+    else {
+        WriteSet([
+        DataEntry(getKeyThumbsUp(comment, koliner), hash),
+        DataEntry(getKeyThumbsUpsCount(comment), thumbsups + 1)
+  #      DataEntry(getKeyCommentStatus(comment), if(thumbsups == VOTERS) then REVEAL else VOTING)
+        ])
+    }
+}
+@Callable(i)
+func voteThumbsDown(comment: String, hash:String) = {
+    let koliner = toBase58String(i.caller.bytes)
+    let thumbsdowns = getValueThumbsDownCount(comment)
+    let status = getValueCommentStatus(comment)
+ #   if ( thumbsups >= VOTERS) then throw("reached max num voters")
+    if (getValueThumbsDown(comment, koliner) != NONE) then throw("koliner has already voted")
+    else if (getKeyCommentAuthor(comment) == NONE) then throw("the comment that you are replying at does not exist")
+    else if (status !=NONE) then throw("voting is not possible")
+    else {
+        WriteSet([
+        DataEntry(getKeyThumbsDown(comment, koliner), hash),
+        DataEntry(getKeyThumbsDownsCount(comment), thumbsdowns + 1)
+  #      DataEntry(getKeyCommentStatus(comment), if(thumbsups == VOTERS) then REVEAL else VOTING)
+        ])
+    }
+}
+
+@Callable(i)
+func donate(comment:String) ={
+    let pmt = extract(i.payment)
+    if (isDefined(pmt.assetId != base58'FiKspxSpkpzT4pMUA9ccZkbJmVXTdu4JhFDXNNXr5noW')) then throw("just Kolin accepted (assetID: FiKspxSpkpzT4pMUA9ccZkbJmVXTdu4JhFDXNNXr5noW)")
+    else{
+        let kolinerAddress = toBase58String(i.caller.bytes)
+        let donation = getValueCommentDonation(comment)
+        let authorAddress = getValueCommentAuthor(comment)
+        if (pmt.amount < donation) then throw("you are trying to pay less than the minimum accepted, don't be greedy")
+        else if (pmt.amount > donation) then throw("thanks for your kind donation, but let's pay just what is needed")
+        else if (authorAddress == NONE) then throw("author not available in register")
+        else {
+            WriteSet([
+            DataEntry(getKeyKolinerCommentCounter(kolinerAddress, comment), getValueKolinerCommentCounter(kolinerAddress, comment) +1),
+            DataEntry(getKeyBalanceAuthor(authorAddress), getValueBalanceAuthor(authorAddress) + pmt.amount)
+            ])
+        }
+    }
+}
+@Callable(i)
+func withdraw() = {
+    let authorAddress = toBase58String(i.caller.bytes)
+    let balance = getValueBalanceAuthor(authorAddress)
+    if (balance <= 0)
+        then throw("you don't have enough balance to withdraw")
+        else ScriptResult(
+            WriteSet([
+            DataEntry(getKeyBalanceAuthor(authorAddress), 0)
+            ]),
+            TransferSet([
+            ScriptTransfer(
+            addressFromStringValue(authorAddress), balance, unit
+            )])
+        )
+}
+@Callable(i)
+func addComment(title: String, donation: Int, data: String) = {
+    let authorAddress = toBase58String(i.caller.bytes)
+    let comment = getKeyComment(authorAddress, title)
+    let authorwhitelist = getExtValueCommentWhitelistStatus(getExtAddressOracle(), authorAddress)
+    if ( donation <= 0 ) then throw("amount lower than comment donation")
+    else if ( getValueCommentAuthor(comment) != NONE ) then throw("this comment already exist")
+    else if (authorwhitelist == BLACKLISTED) then throw("author's account has been blacklisted")
+    else {
+        WriteSet([
+            DataEntry(getKeyCommentAuthor(comment), authorAddress),
+            DataEntry(getKeyCommentDonation(comment), donation),
+            DataEntry(getKeyCommentData(comment), data),
+            DataEntry(getExtKeyCommentWhiteListStatus(authorAddress), authorwhitelist)
+        ])
+    }
+}
